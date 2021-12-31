@@ -19,8 +19,9 @@ exports.getLoggedProfile =  (req,res)=>{
 };
 
 exports.insertProfileData = async (req, res) => {
-  const storeId = req.user.id;
+  console.log("req.params in insertProfileData : ", req.params)
   const {
+    storeId,
     storeName,
     storeDescription,
     storeWeb,
@@ -68,6 +69,59 @@ exports.insertProfileData = async (req, res) => {
     })
     .catch((error) => console.log(error));
 };
+
+// exports.insertProfileData = async (req, res) => {
+//   const id = req.params.id
+//   console.log("req.params.id  --> ", id);
+//   const {
+//     storeName,
+//     storeDescription,
+//     storeWeb,
+//     phoneNumber,
+//     storeCategory,
+//     storeEmail,
+//     imageUrl,
+//     storeStreet,
+//     city,
+//     country,
+//     postcode,
+//   } = req.body;
+//   const mapsUrl = getMapsUrl(storeStreet, city);
+//   let response = {};
+// await pool.query('SELECT id from stores_authentications where id=$1', [id]);
+
+//   await pool
+//     .query(
+//       "INSERT INTO stores (name, store_description, store_category, web_page, store_email, phone_number, image) VALUES ($1, $2, $3, $4, $5, $6, $7) where store_id=$8",
+//       [
+//         storeName,
+//         storeDescription,
+//         storeCategory,
+//         storeWeb,
+//         storeEmail,
+//         phoneNumber,
+//         imageUrl,
+//         id
+//       ]
+//     )
+//     .then(() => {
+//       response.profile = "data uploaded correctly.";
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
+
+//   await pool
+//     .query(
+//       "INSERT INTO stores_locations (address, city, postcode, country, maps_url) VALUES ($1, $2, $3, $4, $5, $6) where store_id=$7",
+//       [storeStreet, city, postcode, country, mapsUrl, id]
+//     )
+//     .then(() => {
+//       response.location = "data uploaded correctly.";
+//       res.status(200).json(response);
+//     })
+//     .catch((error) => console.log(error));
+// };
 
 exports.editProfile = async (req, res) => {
   const storeId = req.user.id;

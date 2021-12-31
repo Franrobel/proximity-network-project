@@ -24,18 +24,35 @@ exports.checkDuplicatedEmail = (req, res, next) => {
     .catch((error) => console.log(error));
 };
 
+// exports.veryfyJwt = (req, res, next) => {
+//   let token = req.header("authorization");
+//   token = token.split(" ")[1]; //separa "bearer" de  "token" y se queda con el segundo elemento
+//   try {
+//     const decodedToken = jwt.verify(token, secret);
+//     req.user = decodedToken.user; //asigna al obj req la propiedad user que tiene la info del token
+//     next();
+//   } catch (err) {
+//     res.status(401).json({ message: "Not authorized token!" });
+//   }
+// };
 exports.veryfyJwt = (req, res, next) => {
-  const auth = req.header("Authorization");
-  const token = auth.split(" ")[1]; //separa "bearer" de  "token" y se queda con el segundo elemento
-  try {
+  let token = req.header("authorization");
+  console.log("token without split", token)
+  token = token.split(" ")[1]; //separa "bearer" de  "token" y se queda con el segundo elemento
+  if (!token) {
+        return res.status(403).send({ message: "authorization denied", isAuthenticated: false });
+      }
+  console.log("token", token )
+  try { 
     const decodedToken = jwt.verify(token, secret);
-    req.user = decodedToken; //asigna al obj req la propiedad user que tiene la info del token
+    req.user = decodedToken.user; //asigna al obj req la propiedad user que tiene la info del token
+    res.status(202).send({message: "everything is fine", decodedToken: decodedToken.id })
+    console.log('decodedToken', decodedToken)
     next();
   } catch (err) {
-    res.status(401).json({ message: "Not authorized token!" });
+    res.status(401).json({ err, message: "Not authorized token!" });
   }
 };
-
 //Controllers
 exports.register = (req, res) => {
   const newUser = req.body;
@@ -85,11 +102,11 @@ exports.logIn = (req, res) => {
       const id = result.rows[0].id;
       const passwordIsValid = bcrypt.compareSync(user.password, dbPassword);
       console.log({passwordIsValid});
-      if (!passwordIsValid) {
+      if (dbPassword !== user.password) {
         return res.status(401).json({"messege":"not valid email or password"});
       } else {
 
-        console.log(id);
+        console.log("id: ", id);
         let token = jwt.sign({ id }, secret, {
           expiresIn: 86400,
         });
