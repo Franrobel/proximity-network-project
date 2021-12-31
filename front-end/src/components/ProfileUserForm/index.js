@@ -16,13 +16,53 @@ const ProfileUserForm = () => {
 
 
     });
+    const uploadStoreData = async (token, data) => {
+        //const dataCargada = JSON.parse(data);
+       console.log("token en upload", token);
+       const dataStore = JSON.parse(data)
+       console.log("data n upload", dataStore);
+        const url = "http://localhost:4000/stores/profiles"
+        const body = {
+            fullname: dataStore.fullname,
+            storeName: dataStore.storeName,
+            description: dataStore.description,
+            street: dataStore.street,
+            postalCode: dataStore.postalCode,
+            city: dataStore.city,
+            country: dataStore.country,
+            storeCategory: dataStore.storeCategory
+        }
+        const config = {
+            method: 'POST',
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` 
+                    },
+            body: JSON.stringify(body)
+        }
+        
+        try {
+            const response = await fetch(url, config)
+            console.log("response", response)
+            const data = await response.json();
+            console.log("data", data);    
+            
+            
+        } catch {
+            
+
+        }
+    
+    }
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm({ resolver: yupResolver(validationSchema) });
 
     // Metodo onSubmit
-    const onSubmit = data => {
-
-        console.log(JSON.stringify(data, null, 2));
+    const onSubmit = (data) => {
+        const token = localStorage.getItem('token')
+        //console.log('token en upload', token);
+        const datosTiendaCargada = JSON.stringify(data, null, 2);
+        uploadStoreData(token, datosTiendaCargada)
     };
 
     return (
