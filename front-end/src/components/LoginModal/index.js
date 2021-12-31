@@ -57,6 +57,7 @@ const LoginModal = () => {
                 const data = await response.json();
                 console.log("data", data);
                 localStorage.setItem("token", data.token);
+                localStorage.setItem("id", data.id);
                 dismissModal();
                 setInvalidUser(false);
                 navigate("/profile-user", { "replace": true });
